@@ -66,7 +66,4 @@ def day7_2():
             base_number = value + value*number+base_number
         return base_number
 
-
-
-
     print(check_color('shiny gold'))
