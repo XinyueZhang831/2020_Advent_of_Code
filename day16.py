@@ -68,18 +68,17 @@ def day16_2():
                 break
         nearby_tickets = nearby_tickets_copy
 
-    not_satisfy_the_rule = collections.defaultdict(set)
+    satisfy_the_rule = collections.defaultdict(set)
     transform_nearby = [[item[i] for item in nearby_tickets] for i in range(20)]
 
     for each_position in range(len(transform_nearby)):
-        for each_number in transform_nearby[each_position]:
-            for k, v in rules_dic.items():
-                if not ((v['min1'] <= each_number <= v['max1']) or (v['min2'] <= each_number <= v['max2'])):
-                    not_satisfy_the_rule[each_position].add(k)
-
-    satisfy_the_rule = collections.defaultdict(set)
-    for k,v in not_satisfy_the_rule.items():
-        satisfy_the_rule[k] = set(list(rules_dic.keys()))-v
+        for k, v in rules_dic.items():
+            total = 0
+            for each_number in transform_nearby[each_position]:
+                if (v['min1'] <= each_number <= v['max1']) or (v['min2'] <= each_number <= v['max2']):
+                    total+=1
+                if len(transform_nearby[each_position]) == total:
+                    satisfy_the_rule[each_position].add(k)
 
     result_dic = collections.defaultdict(list)
     while any([len(v1)>1 for k1,v1 in satisfy_the_rule.items()]):
