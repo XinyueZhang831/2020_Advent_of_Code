@@ -52,9 +52,13 @@ def day20_2():
         input_file = file.read().split('\n\n')
     while '' in input_file:
         input_file.remove('')
-
+    
+    # modify input => a nested list of each piece
+    # graph_dic is a dictionary which store four sides of each piece
     graph_dic = {}
+    # order_list is the dictionary which {'side':[pieceA, pieceB]}
     order_list = collections.defaultdict(list)
+    # whole_piece is a dictionay which contains all lines for each piece
     whole_piece = {}
     for each_input in input_file:
         each_input_lines = each_input.split('\n')
@@ -78,12 +82,7 @@ def day20_2():
             order_list[each_line_side].append(number)
             order_list[each_line_side[::-1]].append(number)
 
-    attached_map = collections.defaultdict(int)
-    for k,v in order_list.items():
-        if len(v) == 2:
-            for each_number in v:
-                attached_map[each_number]+=1
-
+    # find the corner piece
     corner_map = []
     for k,v in attached_map.items():
         if v ==4:
@@ -124,7 +123,8 @@ def day20_2():
             for each_line in number:
                 result_pl.append(each_line[::-1])
         return result_pl
-
+    
+    # to modift the next piece so that the left side of the next piece is the same as the right side of the previous piece
     def modify_next_piece(next_piece, previous_right_side):
         current_left_side = ''
         while current_left_side != previous_right_side:
@@ -143,7 +143,7 @@ def day20_2():
                 whole_piece[next_piece] = new_piece
                 break
 
-
+    # to modift the next piece so that the up side of the next piece is the same as the down side of the piece above it
     def modify_next_piece_up(next_piece, previous_down_side):
         current_up_side = ''
         while current_up_side != previous_down_side:
@@ -162,15 +162,17 @@ def day20_2():
                 whole_piece[next_piece] = new_piece
                 break
 
-
+    # according to the order_list which contains which side is shared with two piece, find the next piece.
     def find_next_piece(current_piece):
         current_right_side = ''.join([i[-1] for i in whole_piece[current_piece]])
         next_piece_list = order_list[current_right_side].copy()
         next_piece_list.remove(current_piece)
         modify_next_piece(next_piece_list[0], current_right_side)
         return next_piece_list[0]
-
+    
+    # graph_finish is a nested list which contains all the puzzle number in order
     graph_finish = []
+    # current lines is a list which contains the puzzle number which should be in the same line
     current_lines = []
     counter = 0
     start_with = corner_map[0]
@@ -181,7 +183,7 @@ def day20_2():
         current_right_side = ''.join([i[-1] for i in whole_piece[start_with]])
         current_down_side = whole_piece[start_with][-1]
 
-
+    # list every piece properly in graph_finish and current_lines
     while counter< len(whole_piece):
         counter +=1
         current_lines.append(start_with)
@@ -214,7 +216,8 @@ def day20_2():
     moster_line2 = [0,5,6,11,12,17,18,19]
     moster_line3 = [1,4,7,10,13,16]
 
-
+    # check the monster by each line and each character to see if there is a monster and how many monster in the picture. if 0 monster, flip up-down and check gain
+    # if still counter = 0, flip left-right. 0 again, rotate to left.
     def find_monster(combine_lines):
         counter = 0
         for i in range(len(combine_lines)):
